@@ -1,0 +1,7 @@
+tcees/
+*.part
+scratch*
+g1.png
+g2.png
+g3.png
+__pycache__/
