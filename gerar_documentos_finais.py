@@ -539,13 +539,13 @@ def gerar_pdf_oficial_tcc(output_pdf):
     st_center_b = ParagraphStyle("CB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, alignment=TA_CENTER)
     st_title_cover = ParagraphStyle("TC", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=14, leading=19, alignment=TA_CENTER)
     st_nat = ParagraphStyle("NAT", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=13.5, leftIndent=6.5*cm, alignment=TA_JUSTIFY)
-    st_h1 = ParagraphStyle("H1", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, spaceBefore=12, spaceAfter=6, textColor=colors.HexColor("#0F172A"))
-    st_h2 = ParagraphStyle("H2", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=10.5, leading=14, spaceBefore=9, spaceAfter=4, textColor=colors.HexColor("#1E3A8A"))
-    st_body = ParagraphStyle("BD", parent=styles["Normal"], fontName="Helvetica", fontSize=10, leading=14.2, firstLineIndent=1.0*cm, spaceAfter=5, alignment=TA_JUSTIFY)
-    st_bullet = ParagraphStyle("BL", parent=styles["Normal"], fontName="Helvetica", fontSize=9.8, leading=13.8, leftIndent=0.5*cm, spaceAfter=4, alignment=TA_JUSTIFY)
-    st_cap = ParagraphStyle("CP", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9, leading=12, spaceBefore=6, spaceAfter=3, textColor=colors.HexColor("#1E293B"))
-    st_fig_cap = ParagraphStyle("FC", parent=styles["Normal"], fontName="Helvetica-Oblique", fontSize=8.5, leading=11.5, spaceBefore=3, spaceAfter=10, alignment=TA_CENTER, textColor=colors.HexColor("#334155"))
-    st_note = ParagraphStyle("NT", parent=styles["Normal"], fontName="Helvetica-Oblique", fontSize=8.2, leading=11, spaceBefore=3, spaceAfter=6, textColor=colors.HexColor("#475569"))
+    st_h1 = ParagraphStyle("H1", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, spaceBefore=12, spaceAfter=6, textColor=colors.black)
+    st_h2 = ParagraphStyle("H2", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=10.5, leading=14, spaceBefore=9, spaceAfter=4, textColor=colors.black)
+    st_body = ParagraphStyle("BD", parent=styles["Normal"], fontName="Helvetica", fontSize=10, leading=14.2, firstLineIndent=1.0*cm, spaceAfter=5, alignment=TA_JUSTIFY, textColor=colors.black)
+    st_bullet = ParagraphStyle("BL", parent=styles["Normal"], fontName="Helvetica", fontSize=9.8, leading=13.8, leftIndent=0.5*cm, spaceAfter=4, alignment=TA_JUSTIFY, textColor=colors.black)
+    st_cap = ParagraphStyle("CP", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9, leading=12, spaceBefore=6, spaceAfter=3, textColor=colors.black)
+    st_fig_cap = ParagraphStyle("FC", parent=styles["Normal"], fontName="Helvetica-Oblique", fontSize=8.5, leading=11.5, spaceBefore=3, spaceAfter=10, alignment=TA_CENTER, textColor=colors.black)
+    st_note = ParagraphStyle("NT", parent=styles["Normal"], fontName="Helvetica-Oblique", fontSize=8.2, leading=11, spaceBefore=3, spaceAfter=6, textColor=colors.black)
 
     story = []
 
