@@ -200,11 +200,64 @@ def add_formatted_table_docx(doc, data, caption_text):
                     pass
     doc.add_paragraph().paragraph_format.space_after = Pt(4)
 
+def add_bookmark_docx(paragraph, bookmark_name, bm_id):
+    start = OxmlElement('w:bookmarkStart')
+    start.set(qn('w:id'), str(bm_id))
+    start.set(qn('w:name'), bookmark_name)
+    paragraph._p.insert(0, start)
+    end = OxmlElement('w:bookmarkEnd')
+    end.set(qn('w:id'), str(bm_id))
+    paragraph._p.append(end)
+
+def add_toc_hyperlink_docx(paragraph, anchor_name, text, is_bold=False):
+    hyperlink = OxmlElement('w:hyperlink')
+    hyperlink.set(qn('w:anchor'), anchor_name)
+    hyperlink.set(qn('w:history'), '1')
+
+    new_run = OxmlElement('w:r')
+    rPr = OxmlElement('w:rPr')
+
+    rFonts = OxmlElement('w:rFonts')
+    rFonts.set(qn('w:ascii'), 'Arial')
+    rFonts.set(qn('w:hAnsi'), 'Arial')
+    rFonts.set(qn('w:cs'), 'Arial')
+    rPr.append(rFonts)
+
+    if is_bold:
+        b = OxmlElement('w:b')
+        rPr.append(b)
+
+    sz = OxmlElement('w:sz')
+    sz.set(qn('w:val'), '20')  # 10pt
+    rPr.append(sz)
+
+    color = OxmlElement('w:color')
+    color.set(qn('w:val'), '000000')
+    rPr.append(color)
+
+    u = OxmlElement('w:u')
+    u.set(qn('w:val'), 'none')
+    rPr.append(u)
+
+    new_run.append(rPr)
+    t = OxmlElement('w:t')
+    t.set(qn('xml:space'), 'preserve')
+    t.text = text
+    new_run.append(t)
+    hyperlink.append(new_run)
+    paragraph._p.append(hyperlink)
+
+def make_anchor_id(title_str):
+    clean = "".join(ch if ch.isalnum() else "_" for ch in title_str.strip())
+    while "__" in clean:
+        clean = clean.replace("__", "_")
+    return "sec_" + clean[:40].strip("_")
+
 def gerar_docx_oficial(output_docx):
     from preparar_doc_tcc import SECOES
     doc = Document()
 
-    # Margens ABNT (Superior/Esquerda 3cm, Inferior/Direita 2cm)
+    # Margens ABNT
     for section in doc.sections:
         section.top_margin = Cm(2.5)
         section.bottom_margin = Cm(2.0)
@@ -214,14 +267,26 @@ def gerar_docx_oficial(output_docx):
     style_normal = doc.styles['Normal']
     style_normal.font.name = 'Arial'
     style_normal.font.size = Pt(11)
+    style_normal.font.color.rgb = RGBColor(0, 0, 0)
+
+    for h_name, h_sz in [('Heading 1', 12), ('Heading 2', 11)]:
+        if h_name in doc.styles:
+            st_h = doc.styles[h_name]
+            st_h.font.name = 'Arial'
+            st_h.font.size = Pt(h_sz)
+            st_h.font.bold = True
+            st_h.font.color.rgb = RGBColor(0, 0, 0)
 
     # --- CAPA ---
     for txt, sz, bld, sp_after in [
         ("FAESA CENTRO UNIVERSITÁRIO", 12, True, 4),
         ("UNIDADE DE EDUCAÇÃO TECNOLÓGICA E COMPUTAÇÃO", 11, True, 36),
-        ("CAMILA RAMOS BASSETE\nLEONARDO BANDEIRA MATIAS\nMATHEUS GOMES EVANGELISTA", 12, True, 90),
-        ("PREDIÇÃO DE SOBRECUSTO EM LICITAÇÕES DE PROJETOS GOVERNAMENTAIS DO ESTADO DO ESPÍRITO SANTO", 14, True, 180),
-        ("VITÓRIA\n2026", 12, True, 0),
+        ("CAMILA RAMOS BASSETE", 12, True, 2),
+        ("LEONARDO BANDEIRA MATIAS", 12, True, 2),
+        ("MATHEUS GOMES EVANGELISTA", 12, True, 90),
+        ("PREDIÇÃO DE SOBRECUSTO EM LICITAÇÕES DE PROJETOS GOVERNAMENTAIS DO ESTADO DO ESPÍRITO SANTO", 14, True, 175),
+        ("VITÓRIA", 12, True, 2),
+        ("2026", 12, True, 0),
     ]:
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -230,12 +295,15 @@ def gerar_docx_oficial(output_docx):
         r.bold = bld
         r.font.size = Pt(sz)
         r.font.name = "Arial"
+        r.font.color.rgb = RGBColor(0, 0, 0)
 
     doc.add_page_break()
 
     # --- FOLHA DE ROSTO ---
     for txt, sz, bld, sp_after in [
-        ("CAMILA RAMOS BASSETE\nLEONARDO BANDEIRA MATIAS\nMATHEUS GOMES EVANGELISTA", 12, True, 70),
+        ("CAMILA RAMOS BASSETE", 12, True, 2),
+        ("LEONARDO BANDEIRA MATIAS", 12, True, 2),
+        ("MATHEUS GOMES EVANGELISTA", 12, True, 70),
         ("PREDIÇÃO DE SOBRECUSTO EM LICITAÇÕES DE PROJETOS GOVERNAMENTAIS DO ESTADO DO ESPÍRITO SANTO", 14, True, 50),
     ]:
         p = doc.add_paragraph()
@@ -245,83 +313,99 @@ def gerar_docx_oficial(output_docx):
         r.bold = bld
         r.font.size = Pt(sz)
         r.font.name = "Arial"
+        r.font.color.rgb = RGBColor(0, 0, 0)
 
     p_nat = doc.add_paragraph()
     p_nat.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p_nat.paragraph_format.left_indent = Cm(7.5)
-    p_nat.paragraph_format.space_after = Pt(110)
+    p_nat.paragraph_format.space_after = Pt(12)
     r_nat = p_nat.add_run(
         "Trabalho de Conclusão de Curso apresentado ao Curso de Engenharia da Computação "
         "do Centro Universitário FAESA, como requisito parcial para obtenção do grau de "
-        "Bacharel em Engenharia da Computação.\n\n"
-        "Prof. Orientador: Wesley Pereira da Silva."
+        "Bacharel em Engenharia da Computação."
     )
     r_nat.font.size = Pt(10)
     r_nat.font.name = "Arial"
 
-    p_loc = doc.add_paragraph()
-    p_loc.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_loc = p_loc.add_run("VITÓRIA\n2026")
-    r_loc.bold = True
-    r_loc.font.size = Pt(12)
-    r_loc.font.name = "Arial"
+    p_ori = doc.add_paragraph()
+    p_ori.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p_ori.paragraph_format.left_indent = Cm(7.5)
+    p_ori.paragraph_format.space_after = Pt(105)
+    r_ori = p_ori.add_run("Prof. Orientador: Wesley Pereira da Silva.")
+    r_ori.bold = True
+    r_ori.font.size = Pt(10)
+    r_ori.font.name = "Arial"
+
+    for txt_l in ["VITÓRIA", "2026"]:
+        p_loc = doc.add_paragraph()
+        p_loc.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_loc.paragraph_format.space_after = Pt(2)
+        r_loc = p_loc.add_run(txt_l)
+        r_loc.bold = True
+        r_loc.font.size = Pt(12)
+        r_loc.font.name = "Arial"
 
     doc.add_page_break()
 
-    # --- SUMÁRIO ---
+    # --- SUMÁRIO CLICÁVEL ---
     p_sum = doc.add_paragraph()
     p_sum.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_sum.paragraph_format.space_after = Pt(18)
     r_sum = p_sum.add_run("SUMÁRIO")
     r_sum.bold = True
     r_sum.font.size = Pt(12)
+    r_sum.font.name = "Arial"
 
     itens_sumario = [
-        ("1 INTRODUÇÃO", "4"),
-        ("  1.1 O PROBLEMA", "4"),
-        ("  1.2 FORMULAÇÃO DO PROBLEMA", "4"),
-        ("  1.3 HIPÓTESE", "5"),
-        ("  1.4 OBJETIVOS (GERAL E ESPECÍFICOS)", "5"),
-        ("  1.5 JUSTIFICATIVA", "5"),
-        ("  1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PMV", "5"),
-        ("2 REFERENCIAL TEÓRICO", "6"),
-        ("  2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "6"),
-        ("  2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "6"),
-        ("  2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "7"),
-        ("  2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "7"),
-        ("  2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "8"),
-        ("3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "8"),
-        ("  3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "8"),
-        ("  3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "8"),
-        ("  3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "9"),
-        ("  3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "10"),
-        ("  3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "11"),
-        ("  3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "13"),
-        ("4 CRONOGRAMA DE EXECUÇÃO", "16"),
-        ("REFERÊNCIAS", "17"),
-        ("ANEXO A — SOLICITAÇÃO TÉCNICA AO TCE-ES", "18"),
+        ("1 INTRODUÇÃO", "1 INTRODUÇÃO", "4"),
+        ("  1.1 O PROBLEMA", "1.1 O PROBLEMA", "4"),
+        ("  1.2 FORMULAÇÃO DO PROBLEMA", "1.2 FORMULAÇÃO DO PROBLEMA", "4"),
+        ("  1.3 HIPÓTESE", "1.3 HIPÓTESE", "4"),
+        ("  1.4 OBJETIVOS", "1.4 OBJETIVOS", "4"),
+        ("  1.5 JUSTIFICATIVA", "1.5 JUSTIFICATIVA", "5"),
+        ("  1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PMV", "1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PREFEITURA DE VITÓRIA", "5"),
+        ("2 REFERENCIAL TEÓRICO", "2 REFERENCIAL TEÓRICO", "6"),
+        ("  2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "6"),
+        ("  2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "6"),
+        ("  2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "6"),
+        ("  2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "7"),
+        ("  2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "7"),
+        ("3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "7"),
+        ("  3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "7"),
+        ("  3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "8"),
+        ("  3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "8"),
+        ("  3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "9"),
+        ("  3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "10"),
+        ("  3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
+        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "14"),
+        ("REFERÊNCIAS", "REFERÊNCIAS", "15"),
+        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "16"),
     ]
-    for item_txt, pg_num in itens_sumario:
+    for item_label, target_heading, pg_num in itens_sumario:
         p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(2)
-        p.paragraph_format.space_after = Pt(2)
-        r = p.add_run(f"{item_txt} {'.' * max(5, 78 - len(item_txt))} {pg_num}")
-        r.font.name = "Arial"
-        r.font.size = Pt(10)
-        if not item_txt.startswith("  "):
-            r.bold = True
+        p.paragraph_format.space_before = Pt(3)
+        p.paragraph_format.space_after = Pt(3)
+        anchor = make_anchor_id(target_heading)
+        dots = "." * max(4, 78 - len(item_label) - len(pg_num))
+        line_str = f"{item_label} {dots} {pg_num}"
+        add_toc_hyperlink_docx(p, anchor, line_str, is_bold=(not item_label.startswith("  ")))
 
     doc.add_page_break()
 
+    bm_counter = 100
+
     # --- SEÇÕES 1, 2 E 3 ---
     for sec_title, subsecs in SECOES:
-        p_sec = doc.add_paragraph()
+        p_sec = doc.add_paragraph(style='Heading 1')
         p_sec.paragraph_format.space_before = Pt(14)
         p_sec.paragraph_format.space_after = Pt(8)
         r_sec = p_sec.add_run(sec_title)
         r_sec.bold = True
         r_sec.font.size = Pt(12)
         r_sec.font.name = "Arial"
+        r_sec.font.color.rgb = RGBColor(0, 0, 0)
+        add_bookmark_docx(p_sec, make_anchor_id(sec_title), bm_counter)
+        bm_counter += 1
 
         for sub_title, pars in subsecs:
             if sub_title == "TABELA_FONTES":
@@ -394,14 +478,17 @@ def gerar_docx_oficial(output_docx):
                         r_fc.font.name = "Arial"
                 continue
 
-            # Subtítulo normal
-            p_sub = doc.add_paragraph()
+            # Subtítulo normal com Bookmark para o Sumário Clicável
+            p_sub = doc.add_paragraph(style='Heading 2')
             p_sub.paragraph_format.space_before = Pt(10)
             p_sub.paragraph_format.space_after = Pt(6)
             r_sub = p_sub.add_run(sub_title)
             r_sub.bold = True
             r_sub.font.size = Pt(11)
             r_sub.font.name = "Arial"
+            r_sub.font.color.rgb = RGBColor(0, 0, 0)
+            add_bookmark_docx(p_sub, make_anchor_id(sub_title), bm_counter)
+            bm_counter += 1
 
             for par_txt in pars:
                 p = doc.add_paragraph()
@@ -418,12 +505,17 @@ def gerar_docx_oficial(output_docx):
                     r.bold = True
 
     # --- SEÇÃO 4: CRONOGRAMA ---
-    p_sec4 = doc.add_paragraph()
+    sec4_title = "4 CRONOGRAMA DE EXECUÇÃO (2026)"
+    p_sec4 = doc.add_paragraph(style='Heading 1')
     p_sec4.paragraph_format.space_before = Pt(14)
     p_sec4.paragraph_format.space_after = Pt(8)
-    r_sec4 = p_sec4.add_run("4 CRONOGRAMA DE EXECUÇÃO (2026)")
+    r_sec4 = p_sec4.add_run(sec4_title)
     r_sec4.bold = True
     r_sec4.font.size = Pt(12)
+    r_sec4.font.name = "Arial"
+    r_sec4.font.color.rgb = RGBColor(0, 0, 0)
+    add_bookmark_docx(p_sec4, make_anchor_id(sec4_title), bm_counter)
+    bm_counter += 1
 
     p_c_intro = doc.add_paragraph()
     p_c_intro.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
@@ -438,12 +530,17 @@ def gerar_docx_oficial(output_docx):
 
     # --- REFERÊNCIAS ---
     doc.add_page_break()
-    p_ref_t = doc.add_paragraph()
+    ref_title = "REFERÊNCIAS"
+    p_ref_t = doc.add_paragraph(style='Heading 1')
     p_ref_t.paragraph_format.space_before = Pt(10)
     p_ref_t.paragraph_format.space_after = Pt(12)
-    r_ref_t = p_ref_t.add_run("REFERÊNCIAS")
+    r_ref_t = p_ref_t.add_run(ref_title)
     r_ref_t.bold = True
     r_ref_t.font.size = Pt(12)
+    r_ref_t.font.name = "Arial"
+    r_ref_t.font.color.rgb = RGBColor(0, 0, 0)
+    add_bookmark_docx(p_ref_t, make_anchor_id(ref_title), bm_counter)
+    bm_counter += 1
 
     for ref in REFERENCIAS_LIST:
         p = doc.add_paragraph()
@@ -456,12 +553,16 @@ def gerar_docx_oficial(output_docx):
 
     # --- ANEXO A ---
     doc.add_page_break()
-    p_anx = doc.add_paragraph()
+    anx_title = "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES"
+    p_anx = doc.add_paragraph(style='Heading 1')
     p_anx.paragraph_format.space_before = Pt(10)
     p_anx.paragraph_format.space_after = Pt(8)
-    r_anx = p_anx.add_run("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES")
+    r_anx = p_anx.add_run(anx_title)
     r_anx.bold = True
     r_anx.font.size = Pt(12)
+    r_anx.font.name = "Arial"
+    r_anx.font.color.rgb = RGBColor(0, 0, 0)
+    add_bookmark_docx(p_anx, make_anchor_id(anx_title), bm_counter)
 
     if os.path.exists("img_painel/anexo_email.png"):
         p_aimg = doc.add_paragraph()
@@ -469,18 +570,18 @@ def gerar_docx_oficial(output_docx):
         p_aimg.add_run().add_picture("img_painel/anexo_email.png", width=Cm(15.5))
 
     doc.save(output_docx)
-    print(f"DOCX salvo com sucesso: {output_docx}")
+    print(f"DOCX salvo com sucesso (com Sumário Clicável): {output_docx}")
 
 
 # ==============================================================================
-# 2. GERADOR DO DOCUMENTO OFICIAL DO TCC EM PDF (.PDF)
+# 2. GERADOR DO DOCUMENTO OFICIAL DO TCC EM PDF (.PDF) COM SUMÁRIO CLICÁVEL
 # ==============================================================================
 
 def header_footer_tcc(canvas, doc):
     canvas.saveState()
     if doc.page > 3:
         canvas.setFont("Helvetica", 8)
-        canvas.setFillColor(colors.HexColor("#475569"))
+        canvas.setFillColor(colors.black)
         canvas.drawString(2.2 * cm, A4[1] - 1.3 * cm, "FAESA — Engenharia da Computação | Predição de Sobrecusto em Licitações e Auditoria de Contratos (Vitória/ES)")
         canvas.drawRightString(A4[0] - 2.0 * cm, A4[1] - 1.3 * cm, f"{doc.page}")
         canvas.setStrokeColor(colors.HexColor("#CBD5E1"))
@@ -490,9 +591,9 @@ def header_footer_tcc(canvas, doc):
 
 def build_rl_table(data, col_widths, styles):
     cell_header = ParagraphStyle("TH", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=7.2, leading=9, textColor=colors.white, alignment=TA_CENTER)
-    cell_body_l = ParagraphStyle("TBL", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.HexColor("#0F172A"), alignment=TA_LEFT)
-    cell_body_r = ParagraphStyle("TBR", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.HexColor("#0F172A"), alignment=TA_RIGHT)
-    cell_body_c = ParagraphStyle("TBC", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.HexColor("#0F172A"), alignment=TA_CENTER)
+    cell_body_l = ParagraphStyle("TBL", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.black, alignment=TA_LEFT)
+    cell_body_r = ParagraphStyle("TBR", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.black, alignment=TA_RIGHT)
+    cell_body_c = ParagraphStyle("TBC", parent=styles["Normal"], fontName="Helvetica", fontSize=7.2, leading=9.2, textColor=colors.black, alignment=TA_CENTER)
 
     formatted_rows = []
     for r_idx, row in enumerate(data):
@@ -536,9 +637,9 @@ def gerar_pdf_oficial_tcc(output_pdf):
         author="Camila Ramos Bassete, Leonardo Bandeira Matias, Matheus Gomes Evangelista"
     )
     styles = getSampleStyleSheet()
-    st_center_b = ParagraphStyle("CB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, alignment=TA_CENTER)
-    st_title_cover = ParagraphStyle("TC", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=14, leading=19, alignment=TA_CENTER)
-    st_nat = ParagraphStyle("NAT", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=13.5, leftIndent=6.5*cm, alignment=TA_JUSTIFY)
+    st_center_b = ParagraphStyle("CB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, alignment=TA_CENTER, textColor=colors.black)
+    st_title_cover = ParagraphStyle("TC", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=14, leading=19, alignment=TA_CENTER, textColor=colors.black)
+    st_nat = ParagraphStyle("NAT", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=13.5, leftIndent=6.5*cm, alignment=TA_JUSTIFY, textColor=colors.black)
     st_h1 = ParagraphStyle("H1", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=12, leading=16, spaceBefore=12, spaceAfter=6, textColor=colors.black)
     st_h2 = ParagraphStyle("H2", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=10.5, leading=14, spaceBefore=9, spaceAfter=4, textColor=colors.black)
     st_body = ParagraphStyle("BD", parent=styles["Normal"], fontName="Helvetica", fontSize=10, leading=14.2, firstLineIndent=1.0*cm, spaceAfter=5, alignment=TA_JUSTIFY, textColor=colors.black)
@@ -577,41 +678,46 @@ def gerar_pdf_oficial_tcc(output_pdf):
     story.append(Paragraph("VITÓRIA<br/>2026", st_center_b))
     story.append(PageBreak())
 
-    # SUMÁRIO
+    # SUMÁRIO CLICÁVEL (links internos <a href="#anchor">)
     story.append(Paragraph("SUMÁRIO", st_center_b))
     story.append(Spacer(1, 0.6 * cm))
     sum_rows = [
-        ["1 INTRODUÇÃO", "4"],
-        ["   1.1 O PROBLEMA", "4"],
-        ["   1.2 FORMULAÇÃO DO PROBLEMA", "4"],
-        ["   1.3 HIPÓTESE", "4"],
-        ["   1.4 OBJETIVOS (GERAL E ESPECÍFICOS)", "4"],
-        ["   1.5 JUSTIFICATIVA", "5"],
-        ["   1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PMV", "5"],
-        ["2 REFERENCIAL TEÓRICO", "6"],
-        ["   2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "6"],
-        ["   2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "6"],
-        ["   2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "6"],
-        ["   2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "7"],
-        ["   2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "7"],
-        ["3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "7"],
-        ["   3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "7"],
-        ["   3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS (TABELA 1)", "8"],
-        ["   3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "8"],
-        ["   3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "9"],
-        ["   3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS (TABELAS 2 A 5)", "10"],
-        ["   3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (FIGURAS 1 A 4)", "11"],
-        ["4 CRONOGRAMA DE EXECUÇÃO (2026)", "14"],
-        ["REFERÊNCIAS", "15"],
-        ["ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "16"],
+        ("1 INTRODUÇÃO", "1 INTRODUÇÃO", "4"),
+        ("   1.1 O PROBLEMA", "1.1 O PROBLEMA", "4"),
+        ("   1.2 FORMULAÇÃO DO PROBLEMA", "1.2 FORMULAÇÃO DO PROBLEMA", "4"),
+        ("   1.3 HIPÓTESE", "1.3 HIPÓTESE", "4"),
+        ("   1.4 OBJETIVOS (GERAL E ESPECÍFICOS)", "1.4 OBJETIVOS", "4"),
+        ("   1.5 JUSTIFICATIVA", "1.5 JUSTIFICATIVA", "5"),
+        ("   1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PMV", "1.6 DELIMITAÇÃO DO ESCOPO: RECORTE NOS PROJETOS DE OBRAS DA PREFEITURA DE VITÓRIA", "5"),
+        ("2 REFERENCIAL TEÓRICO", "2 REFERENCIAL TEÓRICO", "6"),
+        ("   2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "2.1 LICITAÇÕES PÚBLICAS, TERMOS ADITIVOS E A LEI Nº 14.133/2021", "6"),
+        ("   2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "2.2 DADOS ABERTOS GOVERNAMENTAIS E TRANSPARÊNCIA PÚBLICA", "6"),
+        ("   2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "2.3 ENGENHARIA DE DADOS E PROCESSOS ETL", "6"),
+        ("   2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "2.4 MODELAGEM RELACIONAL E CRUZAMENTO DE DADOS PÚBLICOS", "7"),
+        ("   2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "2.5 BUSINESS INTELLIGENCE E ANÁLISE QUANTITATIVA DE RISCO", "7"),
+        ("3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "3 METODOLOGIA, ORIGEM DOS DADOS E LÓGICA DAS ANÁLISES", "7"),
+        ("   3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "7"),
+        ("   3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS (TABELA 1)", "3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "8"),
+        ("   3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "8"),
+        ("   3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "9"),
+        ("   3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS (TABELAS 2 A 5)", "3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "10"),
+        ("   3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (FIGURAS 1 A 4)", "3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
+        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "14"),
+        ("REFERÊNCIAS", "REFERÊNCIAS", "15"),
+        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "16"),
     ]
-    st_sum_l = ParagraphStyle("SL", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=15, textColor=colors.HexColor("#0F172A"))
-    st_sum_b = ParagraphStyle("SB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9.5, leading=15, textColor=colors.HexColor("#0F172A"))
-    st_sum_r = ParagraphStyle("SR", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9.5, leading=15, alignment=TA_RIGHT, textColor=colors.HexColor("#0F172A"))
+    st_sum_l = ParagraphStyle("SL", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=15, textColor=colors.black)
+    st_sum_b = ParagraphStyle("SB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9.5, leading=15, textColor=colors.black)
+    st_sum_r = ParagraphStyle("SR", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9.5, leading=15, alignment=TA_RIGHT, textColor=colors.black)
     t_sum_data = []
-    for txt_s, pg_s in sum_rows:
+    for txt_s, target_h, pg_s in sum_rows:
         st_use = st_sum_l if txt_s.startswith("   ") else st_sum_b
-        t_sum_data.append([Paragraph(txt_s.replace("   ", "&nbsp;&nbsp;&nbsp;&nbsp;"), st_use), Paragraph(pg_s, st_sum_r)])
+        anc = make_anchor_id(target_h)
+        disp_txt = txt_s.replace("   ", "&nbsp;&nbsp;&nbsp;&nbsp;")
+        t_sum_data.append([
+            Paragraph(f'<a href="#{anc}">{disp_txt}</a>', st_use),
+            Paragraph(f'<a href="#{anc}">{pg_s}</a>', st_sum_r)
+        ])
     t_sum = RLTable(t_sum_data, colWidths=[(A4[0]-4.2*cm)*0.88, (A4[0]-4.2*cm)*0.12])
     t_sum.setStyle(TableStyle([
         ("LINEBELOW", (0, 0), (-1, -1), 0.3, colors.HexColor("#E2E8F0")),
@@ -622,10 +728,11 @@ def gerar_pdf_oficial_tcc(output_pdf):
     story.append(t_sum)
     story.append(PageBreak())
 
-    # CONTEÚDO DAS SEÇÕES
+    # CONTEÚDO DAS SEÇÕES (com âncoras <a name="..."/> em cada título)
     avail_w = A4[0] - 4.2 * cm
     for sec_title, subsecs in SECOES:
-        story.append(Paragraph(sec_title, st_h1))
+        anc_sec = make_anchor_id(sec_title)
+        story.append(Paragraph(f'<a name="{anc_sec}"/>{sec_title}', st_h1))
         for sub_title, pars in subsecs:
             if sub_title == "TABELA_FONTES":
                 story.append(Paragraph("Tabela 1 — Síntese das Fontes de Dados Abertos Integradas no Projeto (Vitória/ES)", st_cap))
@@ -667,7 +774,8 @@ def gerar_pdf_oficial_tcc(output_pdf):
                         ]))
                 continue
 
-            story.append(Paragraph(sub_title, st_h2))
+            anc_sub = make_anchor_id(sub_title)
+            story.append(Paragraph(f'<a name="{anc_sub}"/>{sub_title}', st_h2))
             for par_txt in pars:
                 is_bullet_or_sub = par_txt.startswith("•") or par_txt.startswith("   •") or par_txt.startswith("1.4.") or (len(par_txt) > 2 and par_txt[0].isdigit() and par_txt[1] == ".")
                 if par_txt.startswith("1.4."):
@@ -678,7 +786,8 @@ def gerar_pdf_oficial_tcc(output_pdf):
                     story.append(Paragraph(par_txt, st_body))
 
     # SEÇÃO 4: CRONOGRAMA
-    story.append(Paragraph("4 CRONOGRAMA DE EXECUÇÃO (2026)", st_h1))
+    sec4_t = "4 CRONOGRAMA DE EXECUÇÃO (2026)"
+    story.append(Paragraph(f'<a name="{make_anchor_id(sec4_t)}"/>{sec4_t}', st_h1))
     story.append(Paragraph(
         "A Tabela 6 apresenta o cronograma físico de execução das etapas do Trabalho de Conclusão de Curso ao longo do ano letivo de 2026, "
         "contemplando desde a definição do problema e coleta das bases governamentais até a publicação do painel analítico e redação final da monografia.",
@@ -689,21 +798,44 @@ def gerar_pdf_oficial_tcc(output_pdf):
 
     # REFERÊNCIAS
     story.append(PageBreak())
-    story.append(Paragraph("REFERÊNCIAS", st_h1))
+    ref_t = "REFERÊNCIAS"
+    story.append(Paragraph(f'<a name="{make_anchor_id(ref_t)}"/>{ref_t}', st_h1))
     for ref in REFERENCIAS_LIST:
         story.append(Paragraph(ref, st_bullet))
 
     # ANEXO A
     if os.path.exists("img_painel/anexo_email.png"):
         story.append(PageBreak())
-        story.append(Paragraph("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", st_h1))
+        anx_t = "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES"
+        story.append(Paragraph(f'<a name="{make_anchor_id(anx_t)}"/>{anx_t}', st_h1))
         story.append(Spacer(1, 0.2*cm))
         story.append(RLImage("img_painel/anexo_email.png", width=15.5*cm, height=19.0*cm, kind='proportional'))
 
     doc.build(story, onFirstPage=header_footer_tcc, onLaterPages=header_footer_tcc)
-    print(f"PDF Oficial do TCC salvo com sucesso: {output_pdf}")
+
+    # Pós-processamento com PyMuPDF: expandir área clicável para toda a linha do Sumário e criar Marcadores (Outline) do PDF
+    import pymupdf
+    pdf_doc = pymupdf.open(output_pdf)
+    pg_sum = pdf_doc[2]
+    links = pg_sum.get_links()
+    toc_list = []
+    for lk in links:
+        r = lk["from"]
+        if r.x0 < 200:  # Link do título à esquerda -> estende até a margem direita (x1 = 535)
+            lk["from"] = pymupdf.Rect(62, r.y0 - 2, 535, r.y1 + 2)
+            pg_sum.update_link(lk)
+    for txt_s, _, pg_s in sum_rows:
+        lvl = 2 if txt_s.startswith("   ") else 1
+        toc_list.append([lvl, txt_s.strip(), int(pg_s)])
+    pdf_doc.set_toc(toc_list)
+    pdf_doc.saveIncr()
+    pdf_doc.close()
+
+    print(f"PDF Oficial do TCC salvo com sucesso (com Sumário Clicável): {output_pdf}")
 
 
 if __name__ == "__main__":
     gerar_docx_oficial("PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.docx")
     gerar_pdf_oficial_tcc("PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.pdf")
+
+

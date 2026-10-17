@@ -25,9 +25,13 @@ for src, dst in user_imgs:
     shutil.copyfile(src, dst)
 
 # Extrair a imagem do e-mail da página 12 do PDF original para manter o Anexo original também
-pdf_orig = [f for f in os.listdir(".") if f.startswith("PREDI") and f.endswith(".pdf")][0]
+pdf_orig = [f for f in os.listdir(".") if "(2).pdf" in f][0]
 doc_pdf = fitz.open(pdf_orig)
-doc_pdf[11].get_pixmap(dpi=150).save("img_painel/anexo_email.png")
+for img_info in doc_pdf.get_page_images(11):
+    xref = img_info[0]
+    pix = fitz.Pixmap(doc_pdf, xref)
+    pix.save("img_painel/anexo_email.png")
+    break
 doc_pdf.close()
 
 # ==============================================================================
