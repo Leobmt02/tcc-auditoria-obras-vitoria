@@ -118,20 +118,44 @@ CRONOGRAMA_DATA = [
 
 PAINEL_FIGURAS = [
     (
+        "a) Visão 1 — Aba '1. Contratos de Obras (101)': Auditoria de Limites Legais e Subcategorias",
+        [
+            "Finalidade da Visão: Constitui a tela principal do sistema, dedicada exclusivamente ao recorte dos 101 contratos classificados como Obras assinados em 2025 e 2026 pela Prefeitura Municipal de Vitória.",
+            "Indicadores Superiores (Cartões KPI): O primeiro cartão exibe o total de contratos filtrados (101 contratos distribuídos em 57 empresas, sendo 21 contratos aditados, ou 20,8%); o segundo apresenta o Valor Inicial Contratado somado (R$ 545.988.525,59); o terceiro destaca o Total em Aditivos líquidos (R$ 14.161.570,88, equivalente a +2,59% no agregado); o quarto mostra o Valor Atualizado Total (R$ 560.150.096,47) confrontado diretamente com o Valor Empenhado recuperado do Painel de Obras (R$ 99,73 milhões para as obras vinculadas); e o quinto cartão alerta para os 5 contratos que ultrapassaram o limite legal do Art. 125 da Lei nº 14.133/2021, trazendo também o montante efetivamente pago mapeado (R$ 69,57 milhões).",
+            "Gráficos e Tabela de Auditoria: O gráfico horizontal à esquerda ('Top Contratos por % de Aditivo vs. Limite Legal') ordena os contratos com maior variação percentual, aplicando codificação visual automática: barras em vermelho indicam contratos que excedem o limite legal aplicável (25% para obras em geral ou 50% para reformas), enquanto barras em azul indicam aditivos dentro do teto legal (como aqueles estacionados em 24,94% e 25,00%). O gráfico à direita ('Mapeamento por Subcategoria do Objeto') compara lado a lado o volume inicial contratado (azul) e os aditivos acumulados (laranja) em cada uma das 10 subcategorias reais da engenharia. Na parte inferior, a tabela detalhada permite inspecionar contrato a contrato o valor estimado e homologado no PNCP, o desconto licitatório, os termos no TCE-ES e os valores empenhado e pago."
+        ],
         "img_painel/aba1_obras.png",
-        "Figura 1 — Aba 1 do Dashboard Interativo: Auditoria dos 101 Contratos de Obras (2025–2026), exibindo cartões de resumo financeiro, distribuição por Subcategoria Real do Objeto, comparativo de Top 12 contratos aditados frente ao limite legal (25%/50%) e tabela com filtros dinâmicos."
+        "Figura 1 — Aba 1 do Dashboard Interativo: Auditoria dos 101 Contratos de Obras (2025–2026), exibindo cartões de resumo financeiro, comparativo de contratos aditados frente ao limite legal (25%/50%) e distribuição por Subcategoria Real do Objeto."
     ),
     (
+        "b) Visão 2 — Aba '2. Ranking de Empresas & Recorrência': Concentração de Fornecedores",
+        [
+            "Finalidade da Visão: Permite auditar a distribuição dos contratos entre as construtoras e fornecedores, respondendo quantas empresas concentram múltiplos contratos e qual é o comportamento histórico de termos aditivos de cada empresa.",
+            "Controles Específicos e Indicadores: Dispõe de um seletor de escopo ('Somente Contratos de Obras — 101' ou 'Todos os Contratos da PMV — 1.064') e de um filtro de recorrência ('Empresas Recorrentes com 2 ou mais, 3 ou mais, 5 ou mais contratos, ou empresas que receberam aditivo'). Os cinco cartões KPI revelam que, nas obras de 2025–2026, atuam 57 empresas distintas, das quais 21 são recorrentes (concentrando 65 dos 101 contratos), destacando automaticamente a empresa líder em quantidade (Ilumiterra Construções, com 10 contratos).",
+            "Gráficos Comparativos e Drill-Down ('Ver Contratos'): O gráfico à esquerda ('Empresas com Maior Quantidade de Contratos') exibe para cada empresa duas barras paralelas: o total de contratos assinados (azul) e a quantidade de contratos que sofreram aditivo (laranja), permitindo visualizar imediatamente casos como o da empresa Ilumiterra (10 contratos, 3 aditados) ou Renova Construções (3 contratos, 3 aditados — 100% de taxa de aditamento). O gráfico à direita ('Empresas com Maior Volume Financeiro e Aditivos') ordena os maiores contratados em milhões de reais. Na tabela inferior de classificação geral das empresas, o botão interativo 'Ver Contratos' aplica automaticamente o filtro daquela construtora e redireciona o usuário para a lista completa de seus contratos individuais."
+        ],
         "img_painel/aba2_empresas.png",
         "Figura 2 — Aba 2 do Dashboard Interativo: Ranking de Empresas e Recorrência, evidenciando as 57 construtoras contratadas em obras, as 21 empresas recorrentes (2 ou mais contratos) e a proporção de contratos com e sem aditivo por fornecedor."
     ),
     (
+        "c) Visão 3 — Aba '3. Painel Físico/Financeiro (179)': Execução Orçamentária (2021–2026)",
+        [
+            "Finalidade da Visão: Integra os dados históricos do Painel de Obras da Prefeitura Municipal de Vitória (179 intervenções acompanhadas entre 2021 e 2026), suprindo a ausência de dados de execução orçamentária e avanço físico da planilha básica de contratos.",
+            "Indicadores de Execução Orçamentária: Os cinco cartões superiores consolidam o ciclo financeiro completo das 179 obras: Valor Atual Contratado de R$ 2.183.310.390,85; Valor Total Empenhado de R$ 1.703.411.375,30 (78,0% do contratado); Valor Total Liquidado (medido e atestado pela fiscalização) de R$ 1.526.084.258,81; e Valor Efetivamente Pago de R$ 1.525.153.301,58 (69,9% do contratado), além de sinalizar as 10 obras paralisadas ou rescindidas unilateralmente.",
+            "Gráficos de Estágio Físico e Filtros por Bairro: O gráfico de rosca à esquerda ('Obras por Estágio de Execução') demonstra a proporção física da carteira municipal (62 obras em execução, 50 concluídas e recebidas provisoriamente, 39 recebidas definitivamente, 11 reiniciadas, 8 paralisadas, 6 concluídas e não recebidas e 2 com rescisão unilateral). O gráfico de colunas agrupadas à direita confronta, dentro de cada estágio físico, o montante Contratado (azul), Empenhado (laranja) e Pago (verde). A barra de filtros específica desta aba permite pesquisar obras por bairro atendido (ex.: São Pedro, Jardim Camburi, Maruípe), estágio ou secretaria."
+        ],
         "img_painel/aba3_painel_fisico.png",
-        "Figura 3 — Aba 3 do Dashboard Interativo: Painel Físico e Financeiro das 179 Obras da PMV (2021–2026), demonstrando os montantes Contratado (R$ 2,18 bi), Empenhado (R$ 1,70 bi), Liquidado e Pago (R$ 1,53 bi), além da distribuição por estágio de execução e secretaria."
+        "Figura 3 — Aba 3 do Dashboard Interativo: Painel Físico e Financeiro das 179 Obras da PMV (2021–2026), demonstrando os montantes Contratado (R$ 2,18 bi), Empenhado (R$ 1,70 bi), Liquidado e Pago (R$ 1,53 bi), além da distribuição por estágio de execução."
     ),
     (
+        "d) Visão 4 — Aba '4. Todos os Contratos PMV (1.065)': Linha de Base Municipal e Tratamento de Outlier",
+        [
+            "Finalidade da Visão: Apresenta o panorama completo dos 1.065 contratos administrativos firmados pela Prefeitura de Vitória, IPAMV e CDTIV em 2025 e 2026 (incluindo Prestação de Serviços, Fornecimento de Materiais, Locação e Obras), funcionando como linha de base comparativa para o estudo.",
+            "Demonstração Prática do Controle de Outlier: Nesta aba, o seletor 'Outlier (300/2025)' vem configurado por padrão na opção recomendada ('Ocultar Outlier'), exibindo os 1.064 contratos consistentes que somam R$ 1.009.291.078,80 iniciais e R$ 107.465.642,73 em aditivos (+10,65% global, com 76 contratos acima de 25%). Caso o auditor alterne o filtro para 'Incluir Outlier', o painel recalcula instantaneamente os cartões para R$ 2,24 bilhões em aditivos (+222,16%), demonstrando visualmente o impacto da distorção causada pelo erro material de digitação no Contrato nº 300/2025.",
+            "Comparativo entre Serviços Contínuos e Obras: Os gráficos desta aba evidenciam que os maiores percentuais de acréscimo na administração geral ocorrem em contratos de terceirização de mão de obra, limpeza, transporte e tecnologia da informação (que sofrem prorrogações plurianuais sucessivas), justificando tecnicamente o recorte metodológico do TCC nos contratos de obras de engenharia."
+        ],
         "img_painel/aba4_todos_contratos.png",
-        "Figura 4 — Aba 4 do Dashboard Interativo: Visão Geral de Todos os 1.065 Contratos da PMV (2025–2026), com tratamento do outlier de erro material (Contrato 300/2025), distribuição por Unidade Gestora e ranking de aditivos gerais."
+        "Figura 4 — Aba 4 do Dashboard Interativo: Visão Geral de Todos os 1.065 Contratos da PMV (2025–2026), com filtro ativo de ocultação do outlier (Contrato 300/2025), distribuição por subcategoria geral e ranking de aditivos."
     )
 ]
 
@@ -374,12 +398,12 @@ def gerar_docx_oficial(output_docx):
         ("  3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "7"),
         ("  3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "8"),
         ("  3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "8"),
-        ("  3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "9"),
+        ("  3.4 LÓGICA DAS ANÁLISES E REGRAS DE CÁLCULO", "3.4 LÓGICA DAS ANÁLISES E REGRAS DE CÁLCULO", "9"),
         ("  3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "10"),
-        ("  3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
-        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "14"),
-        ("REFERÊNCIAS", "REFERÊNCIAS", "15"),
-        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "16"),
+        ("  3.6 DESENVOLVIMENTO, DOCUMENTAÇÃO E GUIA DE USO DO PAINEL INTERATIVO", "3.6 DESENVOLVIMENTO, DOCUMENTAÇÃO E GUIA DE USO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
+        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "16"),
+        ("REFERÊNCIAS", "REFERÊNCIAS", "17"),
+        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "18"),
     ]
     for item_label, target_heading, pg_num in itens_sumario:
         p = doc.add_paragraph()
@@ -460,11 +484,29 @@ def gerar_docx_oficial(output_docx):
                 )
                 continue
             elif sub_title == "IMAGENS_PAINEL":
-                for img_path, fig_cap in PAINEL_FIGURAS:
+                for vis_title, vis_pars, img_path, fig_cap in PAINEL_FIGURAS:
+                    p_vt = doc.add_paragraph()
+                    p_vt.paragraph_format.space_before = Pt(10)
+                    p_vt.paragraph_format.space_after = Pt(4)
+                    r_vt = p_vt.add_run(vis_title)
+                    r_vt.bold = True
+                    r_vt.font.size = Pt(11)
+                    r_vt.font.name = "Arial"
+
+                    for vp in vis_pars:
+                        p_vp = doc.add_paragraph()
+                        p_vp.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                        p_vp.paragraph_format.first_line_indent = Cm(1.25)
+                        p_vp.paragraph_format.line_spacing = 1.35
+                        p_vp.paragraph_format.space_after = Pt(5)
+                        r_vp = p_vp.add_run(vp)
+                        r_vp.font.name = "Arial"
+                        r_vp.font.size = Pt(10.5)
+
                     if os.path.exists(img_path):
                         p_img = doc.add_paragraph()
                         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                        p_img.paragraph_format.space_before = Pt(8)
+                        p_img.paragraph_format.space_before = Pt(6)
                         p_img.paragraph_format.space_after = Pt(2)
                         run_img = p_img.add_run()
                         run_img.add_picture(img_path, width=Cm(16.0))
@@ -492,7 +534,8 @@ def gerar_docx_oficial(output_docx):
 
             for par_txt in pars:
                 p = doc.add_paragraph()
-                is_bullet_or_sub = par_txt.startswith("•") or par_txt.startswith("   •") or par_txt.startswith("1.4.") or (len(par_txt) > 2 and par_txt[0].isdigit() and par_txt[1] == ".")
+                is_sub3 = par_txt.startswith("1.4.") or par_txt.startswith("3.6.")
+                is_bullet_or_sub = par_txt.startswith("•") or par_txt.startswith("   •") or is_sub3 or (len(par_txt) > 2 and par_txt[0].isdigit() and par_txt[1] == ".")
                 p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
                 if not is_bullet_or_sub:
                     p.paragraph_format.first_line_indent = Cm(1.25)
@@ -501,7 +544,7 @@ def gerar_docx_oficial(output_docx):
                 r = p.add_run(par_txt)
                 r.font.name = "Arial"
                 r.font.size = Pt(11)
-                if par_txt.startswith("1.4."):
+                if is_sub3:
                     r.bold = True
 
     # --- SEÇÃO 4: CRONOGRAMA ---
@@ -699,12 +742,12 @@ def gerar_pdf_oficial_tcc(output_pdf):
         ("   3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "3.1 NATUREZA DA PESQUISA E DELIMITAÇÃO AOS PROJETOS DE OBRAS DA PMV", "7"),
         ("   3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS (TABELA 1)", "3.2 ORIGEM DOS DADOS E FONTES UTILIZADAS", "8"),
         ("   3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "3.3 PIPELINE DE COLETA, HIGIENIZAÇÃO E INTEGRIDADE (ETL)", "8"),
-        ("   3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "3.4 LÓGICA DAS ANÁLISES E FÓRMULAS MATEMÁTICAS", "9"),
+        ("   3.4 LÓGICA DAS ANÁLISES E REGRAS DE CÁLCULO", "3.4 LÓGICA DAS ANÁLISES E REGRAS DE CÁLCULO", "9"),
         ("   3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS (TABELAS 2 A 5)", "3.5 SÍNTESE DOS RESULTADOS QUANTITATIVOS OBTIDOS", "10"),
-        ("   3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (FIGURAS 1 A 4)", "3.6 ARQUITETURA E DEMONSTRAÇÃO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
-        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "14"),
-        ("REFERÊNCIAS", "REFERÊNCIAS", "15"),
-        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "16"),
+        ("   3.6 DESENVOLVIMENTO, DOCUMENTAÇÃO E GUIA DE USO DO PAINEL INTERATIVO", "3.6 DESENVOLVIMENTO, DOCUMENTAÇÃO E GUIA DE USO DO PAINEL INTERATIVO (DASHBOARD WEB)", "11"),
+        ("4 CRONOGRAMA DE EXECUÇÃO (2026)", "4 CRONOGRAMA DE EXECUÇÃO (2026)", "16"),
+        ("REFERÊNCIAS", "REFERÊNCIAS", "17"),
+        ("ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "ANEXO A — REGISTRO DE SOLICITAÇÃO TÉCNICA DE DADOS ABERTOS AO TCE-ES", "18"),
     ]
     st_sum_l = ParagraphStyle("SL", parent=styles["Normal"], fontName="Helvetica", fontSize=9.5, leading=15, textColor=colors.black)
     st_sum_b = ParagraphStyle("SB", parent=styles["Normal"], fontName="Helvetica-Bold", fontSize=9.5, leading=15, textColor=colors.black)
@@ -764,7 +807,10 @@ def gerar_pdf_oficial_tcc(output_pdf):
                 story.append(Spacer(1, 0.25*cm))
                 continue
             elif sub_title == "IMAGENS_PAINEL":
-                for img_path, fig_cap in PAINEL_FIGURAS:
+                for vis_title, vis_pars, img_path, fig_cap in PAINEL_FIGURAS:
+                    story.append(Paragraph(f"<b>{vis_title}</b>", st_h2))
+                    for vp in vis_pars:
+                        story.append(Paragraph(vp, st_body))
                     if os.path.exists(img_path):
                         img_obj = RLImage(img_path, width=16.2*cm, height=8.2*cm, kind='proportional')
                         story.append(KeepTogether([
@@ -777,8 +823,9 @@ def gerar_pdf_oficial_tcc(output_pdf):
             anc_sub = make_anchor_id(sub_title)
             story.append(Paragraph(f'<a name="{anc_sub}"/>{sub_title}', st_h2))
             for par_txt in pars:
-                is_bullet_or_sub = par_txt.startswith("•") or par_txt.startswith("   •") or par_txt.startswith("1.4.") or (len(par_txt) > 2 and par_txt[0].isdigit() and par_txt[1] == ".")
-                if par_txt.startswith("1.4."):
+                is_sub3 = par_txt.startswith("1.4.") or par_txt.startswith("3.6.")
+                is_bullet_or_sub = par_txt.startswith("•") or par_txt.startswith("   •") or is_sub3 or (len(par_txt) > 2 and par_txt[0].isdigit() and par_txt[1] == ".")
+                if is_sub3:
                     story.append(Paragraph(f"<b>{par_txt}</b>", st_bullet))
                 elif is_bullet_or_sub:
                     story.append(Paragraph(par_txt, st_bullet))
