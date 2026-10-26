@@ -860,8 +860,10 @@ def gerar_pdf_oficial_tcc(output_pdf):
 
     doc.build(story, onFirstPage=header_footer_tcc, onLaterPages=header_footer_tcc)
 
-    # Pós-processamento com PyMuPDF: expandir área clicável para toda a linha do Sumário e criar Marcadores (Outline) do PDF
+    # Pós-processamento com PyMuPDF: expandir área clicável para toda a linha do Sumário, tornar todas as URLs clicáveis e criar Marcadores (Outline) do PDF
     import pymupdf
+    import re
+    import shutil
     pdf_doc = pymupdf.open(output_pdf)
     pg_sum = pdf_doc[2]
     links = pg_sum.get_links()
@@ -875,14 +877,28 @@ def gerar_pdf_oficial_tcc(output_pdf):
         lvl = 2 if txt_s.startswith("   ") else 1
         toc_list.append([lvl, txt_s.strip(), int(pg_s)])
     pdf_doc.set_toc(toc_list)
+
+    # Tornar todas as URLs (https://...) clicáveis em qualquer página do PDF
+    for page in pdf_doc:
+        text_page = page.get_text("text")
+        for m_url in re.finditer(r"https?://[^\s\)\>\"']+", text_page):
+            raw_url = m_url.group(0).rstrip(".,;)")
+            rects = page.search_for(raw_url)
+            for rc in rects:
+                page.insert_link({"kind": pymupdf.LINK_URI, "from": rc, "uri": raw_url})
+
     pdf_doc.saveIncr()
     pdf_doc.close()
 
-    print(f"PDF Oficial do TCC salvo com sucesso (com Sumário Clicável): {output_pdf}")
+    shutil.copyfile(output_pdf, "TCC_Oficial_Predicao_Sobrecusto_PMV.pdf")
+    print(f"PDF Oficial do TCC salvo com sucesso (com Sumário e URLs Clicáveis): {output_pdf}")
 
 
 if __name__ == "__main__":
+    import shutil
     gerar_docx_oficial("PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.docx")
+    shutil.copyfile("PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.docx", "TCC_Oficial_Predicao_Sobrecusto_PMV.docx")
     gerar_pdf_oficial_tcc("PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.pdf")
+
 
 

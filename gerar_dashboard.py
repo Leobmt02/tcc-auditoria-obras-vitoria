@@ -476,9 +476,10 @@ html_template = r"""<!DOCTYPE html>
     <h1>
       <span>Auditoria Quantitativa — Prefeitura de Vitória/ES</span>
       <span class="badge-pill">TCC • 2025–2026</span>
-      <a href="PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.pdf" target="_blank" download style="text-decoration:none;background:#4f46e5;color:#fff;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📘 Documento Oficial TCC (PDF)</a>
-      <a href="PREDIÇAO_DE_SOBRECUSTO_EM_LICITAÇOES_TCC_ATUALIZADO.docx" download style="text-decoration:none;background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📝 TCC Editável (Word)</a>
-      <a href="Analise_Contratos_PMV_2025_2026.pdf" target="_blank" download style="text-decoration:none;background:#0284c7;color:#fff;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📄 Relatório Técnico PDF</a>
+      <a href="TCC_Oficial_Predicao_Sobrecusto_PMV.pdf" target="_blank" style="text-decoration:none;background:#4f46e5;color:#fff;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📘 Documento Oficial TCC (PDF)</a>
+      <a href="TCC_Oficial_Predicao_Sobrecusto_PMV.docx" download style="text-decoration:none;background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📝 TCC Editável (Word)</a>
+      <a href="Documentacao_e_Guia_de_Apresentacao_Painel_TCC.pdf" target="_blank" style="text-decoration:none;background:#0d9488;color:#fff;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">🧭 Guia do Painel (PDF)</a>
+      <a href="Analise_Contratos_PMV_2025_2026.pdf" target="_blank" style="text-decoration:none;background:#0284c7;color:#fff;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📄 Relatório Técnico PDF</a>
       <a href="contratos_obras_2025_2026.csv" download style="text-decoration:none;background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1;font-size:0.73rem;padding:4px 10px;border-radius:6px;font-weight:600;">📊 CSV de Obras</a>
     </h1>
     <p>Análise de Contratos, Termos Aditivos (Lei 14.133/2021), Empresas Recorrentes, Licitações (PNCP), TCE-ES e Painel de Obras</p>
